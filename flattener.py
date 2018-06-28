@@ -11,6 +11,11 @@ ET.register_namespace("android", "http://schemas.android.com/apk/res/android")
 xml_tree = ET.parse(sys.argv[1])
 xml_root = xml_tree.getroot()
 
+#Get the horizontal scale factor if there is one
+scale = 1.0
+if (len(sys.argv) >= 3):
+    scale = float(sys.argv[2])
+
 #Check that the root is a relative layout
 if (xml_root.tag != "RelativeLayout"):
     print("ERROR: XML File must have RelativeLayout as root")
@@ -77,6 +82,10 @@ class Node:
             return node.destroy_children()
         
         self.children = flatten_rec(self)
+
+    def scale_children(self, scale):
+        for child in self.children:
+            child.pos = int(child.pos * scale)
 
     def print_children(self):
         def print_children_rec(node, level):
@@ -191,6 +200,9 @@ root_x.print_children()
 #Now gotta flatten the tree
 root_x.flatten()
 
+#Scale it
+root_x.scale_children(scale)
+
 root_x.print_children()
 
 #--------------------------------------------------- Same thing for vertical ----------------------------------------------#
@@ -304,6 +316,7 @@ root_y.print_children()
 root_y.flatten()
 
 root_y.print_children()
+
 
 
 #------------------------------------ Now we change the XML ------------------------------------------#
